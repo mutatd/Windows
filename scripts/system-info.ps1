@@ -1,5 +1,7 @@
 Clear-Host
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "=== SYSTEM INFORMATION ===" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Hostname and user
