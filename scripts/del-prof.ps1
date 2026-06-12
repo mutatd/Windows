@@ -1,5 +1,7 @@
 Clear-Host
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "=== DELETE OLD PROFILES ===" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Never delete these
