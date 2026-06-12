@@ -22,24 +22,48 @@ do {
     switch ($choice.ToUpper()) {
         '1' { 
             Write-Host "Loading System Info..." -ForegroundColor Yellow
-            $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/system-info.ps1'
-            iex $script
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/system-info.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
         }
         '2' { 
             Write-Host "Loading Temp Cleaner..." -ForegroundColor Yellow
-            $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/clear-temp.ps1'
-            iex $script
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/clear-temp.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
         }
         '3' { 
             Write-Host "Loading Profile Cleaner..." -ForegroundColor Yellow
-            $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/del-prof.ps1'
-            iex $script
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/delprof.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
         }
         'R' { 
             Write-Host "Refreshing controller from GitHub..." -ForegroundColor Yellow
-            $newController = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/controller.ps1'
-            iex $newController
-            return
+            try {
+                $newController = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/controller.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $newController
+                return
+            } catch {
+                Write-Host "ERROR: Could not refresh - $_" -ForegroundColor Red
+                Pause
+            }
         }
         'Q' { Write-Host "Exiting..." -ForegroundColor Yellow }
         default { Write-Host "Invalid option" -ForegroundColor Red; Start-Sleep 1 }
