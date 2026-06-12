@@ -5,7 +5,7 @@ $Host.UI.RawUI.WindowTitle = "IT Toolkit"
 do {
     Clear-Host
     Write-Host "========================================" -ForegroundColor Cyan
-    Write-Host "         IT TOOLKIT" -ForegroundColor Yellow
+    Write-Host "         Windows Toolkit" -ForegroundColor Yellow
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  [1] System Information Summary"
