@@ -10,7 +10,7 @@ do {
     Write-Host ""
     Write-Host "  [1] System Information Summary"
     Write-Host "  [2] Clear Temp Files & Recycle Bin"
-    Write-Host "  [3] Delete Old User Profiles (DelProf)"
+    Write-Host "  [3] Delete Old User Profiles"
     Write-Host ""
     Write-Host "  [R] Refresh Controller"
     Write-Host "  [Q] Quit"
