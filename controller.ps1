@@ -1,6 +1,6 @@
 # Windows Controller
 Clear-Host
-$Host.UI.RawUI.WindowTitle = "IT Toolkit"
+$Host.UI.RawUI.WindowTitle = "Windows Toolkit"
 
 do {
     Clear-Host
