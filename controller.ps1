@@ -1,5 +1,4 @@
-# IT Toolkit Menu
-# Edit this file on GitHub anytime - no need to reflash Arduino
+# Windows Controller
 
 Clear-Host
 $Host.UI.RawUI.WindowTitle = "Windows Controller"
