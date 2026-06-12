@@ -1,5 +1,7 @@
 Clear-Host
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "=== CLEARING TEMP FILES ===" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 $paths = @(
