@@ -45,7 +45,7 @@ do {
         '3' { 
             Write-Host "Loading Profile Cleaner..." -ForegroundColor Yellow
             try {
-                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/delprof.ps1' -UseBasicParsing -ErrorAction Stop
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/del-prof.ps1' -UseBasicParsing -ErrorAction Stop
                 Clear-Host
                 iex $script
             } catch {
