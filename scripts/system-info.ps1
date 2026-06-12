@@ -59,14 +59,14 @@ Write-Host ""
 
 # Network
 Write-Host "=== NETWORK ===" -ForegroundColor Yellow
-Get-NetIPAddress -AddressFamily IPv4 | Where-Object InterfaceAlias -notlike "*Loopback*" -and PrefixOrigin -ne "WellKnown" | ForEach-Object {
+Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike "*Loopback*" -and $_.PrefixOrigin -ne "WellKnown" } | ForEach-Object {
     Write-Host "$($_.InterfaceAlias): $($_.IPAddress)" -ForegroundColor Green
 }
 
 # DNS servers
 Write-Host ""
 Write-Host "DNS Servers:" -ForegroundColor Yellow
-Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object ServerAddresses -ne "{}" | ForEach-Object {
+Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses -ne "{}" } | ForEach-Object {
     Write-Host "  $($_.InterfaceAlias): $($_.ServerAddresses -join ', ')" -ForegroundColor Green
 }
 
