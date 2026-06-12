@@ -9,18 +9,33 @@ $paths = @(
     "C:\Windows\Prefetch"
 )
 
-$totalFreed = 0
+$totalDeleted = 0
+$totalFiles = 0
 
 foreach ($path in $paths) {
     if (Test-Path $path) {
         Write-Host "Cleaning: $path" -ForegroundColor Gray
+        
         $items = Get-ChildItem -Path $path -Recurse -Force -ErrorAction SilentlyContinue
-        $sizeBefore = ($items | Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue).Sum
-        $items | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-        if ($sizeBefore) {
-            $totalFreed += $sizeBefore
+        $fileCount = $items.Count
+        $totalFiles += $fileCount
+        
+        # Actually delete and capture what succeeds
+        $deletedSize = 0
+        foreach ($item in $items) {
+            try {
+                $itemSize = $item.Length
+                Remove-Item $item.FullName -Force -ErrorAction Stop
+                $deletedSize += $itemSize
+            } catch {
+                # File in use or locked - skip silently
+            }
         }
-        Write-Host "  Done." -ForegroundColor Green
+        
+        $totalDeleted += $deletedSize
+        $deletedMB = [math]::Round($deletedSize/1MB, 2)
+        Write-Host "  Removed $fileCount files ($deletedMB MB)" -ForegroundColor Green
+        
     } else {
         Write-Host "Skipping: $path (not found)" -ForegroundColor DarkGray
     }
@@ -33,8 +48,12 @@ Write-Host "  Done." -ForegroundColor Green
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-$freedMB = [math]::Round($totalFreed/1MB, 2)
-Write-Host "Total space freed: ${freedMB} MB" -ForegroundColor Yellow
+$totalMB = [math]::Round($totalDeleted/1MB, 2)
+Write-Host "Total files deleted: $totalFiles" -ForegroundColor Yellow
+Write-Host "Total space freed: $totalMB MB" -ForegroundColor Yellow
+if ($totalMB -eq 0) {
+    Write-Host "(Most temp files are currently in use by running processes)" -ForegroundColor DarkGray
+}
 Write-Host "========================================" -ForegroundColor Cyan
 
 Write-Host ""
