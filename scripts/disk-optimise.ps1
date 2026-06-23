@@ -118,11 +118,25 @@ do {
         '5' {
             Write-Host "`nAnalysing Drive Fragmentation..." -ForegroundColor Yellow
             try {
-                $drives = Get-Volume | Where-Object { $_.DriveType -eq 'Fixed' -and $_.DriveLetter -ne $null }
-                foreach ($drive in $drives) {
-                    Write-Host "`nDrive $($drive.DriveLetter): - $($drive.FileSystemLabel)" -ForegroundColor White
-                    $result = Optimize-Volume -DriveLetter $drive.DriveLetter -analyse -Verbose 4>&1
-                    Write-Host $result -ForegroundColor Gray
+                $drives = Get-Volume | Where-Object { $_.DriveType -eq 'Fixed' -and $_.DriveLetter -ne $null -and $_.FileSystem -eq 'NTFS' }
+                if ($drives) {
+                    foreach ($drive in $drives) {
+                        Write-Host "`nDrive $($drive.DriveLetter): - $($drive.FileSystemLabel)" -ForegroundColor White
+                        try {
+                            $result = Optimize-Volume -DriveLetter $drive.DriveLetter -Analyze -Verbose -ErrorAction Stop 4>&1
+                            foreach ($line in $result) {
+                                if ($line -match 'fragmented') {
+                                    Write-Host $line -ForegroundColor $(if($line -match '0%|1%'){'Green'}else{'Yellow'})
+                                } else {
+                                    Write-Host $line -ForegroundColor Gray
+                                }
+                            }
+                        } catch {
+                            Write-Host "Could not analyse drive $($drive.DriveLetter): $_" -ForegroundColor Red
+                        }
+                    }
+                } else {
+                    Write-Host "No fixed NTFS drives found to analyse" -ForegroundColor Gray
                 }
             } catch {
                 Write-Host "Error: $_" -ForegroundColor Red
