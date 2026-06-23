@@ -20,30 +20,38 @@ do {
         '1' {
             Write-Host "`nNetwork Adapters:" -ForegroundColor Yellow
             Write-Host "=================" -ForegroundColor Cyan
-            $adapters = Get-NetAdapter | Where-Object Status -eq 'Up'
-            foreach ($adapter in $adapters) {
-                Write-Host "Name: $($adapter.Name)" -ForegroundColor White
-                Write-Host "Status: $($adapter.Status)" -ForegroundColor Green
-                Write-Host "Speed: $($adapter.LinkSpeed)" -ForegroundColor Gray
-                Write-Host "MAC: $($adapter.MacAddress)" -ForegroundColor Gray
-                Write-Host "Driver: $($adapter.DriverVersion)" -ForegroundColor Gray
-                Write-Host "---" -ForegroundColor DarkGray
+            try {
+                $adapters = Get-NetAdapter | Where-Object Status -eq 'Up'
+                foreach ($adapter in $adapters) {
+                    Write-Host "Name: $($adapter.Name)" -ForegroundColor White
+                    Write-Host "Status: $($adapter.Status)" -ForegroundColor Green
+                    Write-Host "Speed: $($adapter.LinkSpeed)" -ForegroundColor Gray
+                    Write-Host "MAC: $($adapter.MacAddress)" -ForegroundColor Gray
+                    Write-Host "Driver: $($adapter.DriverVersion)" -ForegroundColor Gray
+                    Write-Host "---" -ForegroundColor DarkGray
+                }
+            } catch {
+                Write-Host "Error: $_" -ForegroundColor Red
             }
             Pause
         }
         '2' {
             Write-Host "`nIP Configuration:" -ForegroundColor Yellow
             Write-Host "================" -ForegroundColor Cyan
-            $configs = Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -ne $null }
-            foreach ($config in $configs) {
-                Write-Host "Interface: $($config.InterfaceAlias)" -ForegroundColor White
-                Write-Host "IPv4: $($config.IPv4Address.IPAddress)" -ForegroundColor Green
-                Write-Host "Gateway: $($config.IPv4DefaultGateway.NextHop)" -ForegroundColor Gray
-                Write-Host "DNS Servers:" -ForegroundColor Gray
-                foreach ($dns in $config.DNSServer) {
-                    Write-Host "  - $($dns.ServerAddresses)" -ForegroundColor Gray
+            try {
+                $configs = Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -ne $null }
+                foreach ($config in $configs) {
+                    Write-Host "Interface: $($config.InterfaceAlias)" -ForegroundColor White
+                    Write-Host "IPv4: $($config.IPv4Address.IPAddress)" -ForegroundColor Green
+                    Write-Host "Gateway: $($config.IPv4DefaultGateway.NextHop)" -ForegroundColor Gray
+                    Write-Host "DNS Servers:" -ForegroundColor Gray
+                    foreach ($dns in $config.DNSServer) {
+                        Write-Host "  - $($dns.ServerAddresses)" -ForegroundColor Gray
+                    }
+                    Write-Host "---" -ForegroundColor DarkGray
                 }
-                Write-Host "---" -ForegroundColor DarkGray
+            } catch {
+                Write-Host "Error: $_" -ForegroundColor Red
             }
             Pause
         }
@@ -58,10 +66,14 @@ do {
             
             foreach ($test in $tests) {
                 Write-Host "Testing $($test.Name)..." -ForegroundColor White -NoNewline
-                $result = Test-Connection -ComputerName $test.Address -Count 2 -Quiet
-                if ($result) {
-                    Write-Host " SUCCESS" -ForegroundColor Green
-                } else {
+                try {
+                    $result = Test-Connection -ComputerName $test.Address -Count 2 -Quiet -ErrorAction Stop
+                    if ($result) {
+                        Write-Host " SUCCESS" -ForegroundColor Green
+                    } else {
+                        Write-Host " FAILED" -ForegroundColor Red
+                    }
+                } catch {
                     Write-Host " FAILED" -ForegroundColor Red
                 }
             }
@@ -71,40 +83,62 @@ do {
             Write-Host "`nTracing route to google.com..." -ForegroundColor Yellow
             Write-Host "=================================" -ForegroundColor Cyan
             try {
-                $trace = Test-NetConnection -ComputerName google.com -TraceRoute
+                $trace = Test-NetConnection -ComputerName google.com -TraceRoute -ErrorAction Stop
                 Write-Host "Ping: $($trace.PingSucceeded)" -ForegroundColor $(if($trace.PingSucceeded){'Green'}else{'Red'})
-                Write-Host "Latency: $($trace.Latency)ms" -ForegroundColor White
+                if ($trace.Latency) {
+                    Write-Host "Latency: $($trace.Latency)ms" -ForegroundColor White
+                }
                 Write-Host "`nHops:" -ForegroundColor Yellow
                 $hopCount = 0
-                foreach ($hop in $trace.TraceRoute) {
-                    $hopCount++
-                    Write-Host "$hopCount`: $hop" -ForegroundColor White
+                if ($trace.TraceRoute) {
+                    foreach ($hop in $trace.TraceRoute) {
+                        $hopCount++
+                        Write-Host "$hopCount`: $hop" -ForegroundColor White
+                    }
+                } else {
+                    Write-Host "No trace route data available" -ForegroundColor Gray
                 }
             } catch {
-                Write-Host "Error: $_" -ForegroundColor Red
+                Write-Host "Error: Unable to trace route - $_" -ForegroundColor Red
             }
             Pause
         }
         '5' {
             Write-Host "`nActive TCP Connections:" -ForegroundColor Yellow
             Write-Host "=======================" -ForegroundColor Cyan
-            $connections = Get-NetTCPConnection | Where-Object State -eq 'Established' | 
-                Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, 
-                @{Name="Process";Expression={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).Name}}
-            
-            foreach ($conn in $connections) {
-                Write-Host "Local: $($conn.LocalAddress):$($conn.LocalPort)" -ForegroundColor White
-                Write-Host "Remote: $($conn.RemoteAddress):$($conn.RemotePort)" -ForegroundColor Gray
-                Write-Host "Process: $($conn.Process)" -ForegroundColor Gray
-                Write-Host "---" -ForegroundColor DarkGray
+            try {
+                $connections = Get-NetTCPConnection | Where-Object State -eq 'Established' | 
+                    Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, 
+                    @{Name="Process";Expression={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).Name}}
+                
+                if ($connections) {
+                    foreach ($conn in $connections) {
+                        Write-Host "Local: $($conn.LocalAddress):$($conn.LocalPort)" -ForegroundColor White
+                        Write-Host "Remote: $($conn.RemoteAddress):$($conn.RemotePort)" -ForegroundColor Gray
+                        Write-Host "Process: $($conn.Process)" -ForegroundColor Gray
+                        Write-Host "---" -ForegroundColor DarkGray
+                    }
+                } else {
+                    Write-Host "No active established connections found" -ForegroundColor Gray
+                }
+            } catch {
+                Write-Host "Error: $_" -ForegroundColor Red
             }
             Pause
         }
         '6' {
             Write-Host "`nSpeed Test (Ping Response Times):" -ForegroundColor Yellow
             Write-Host "=================================" -ForegroundColor Cyan
+            
+            # Get gateway safely
+            try {
+                $gateway = (Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction Stop | Select-Object -First 1).NextHop
+            } catch {
+                $gateway = $null
+            }
+            
             $targets = @(
-                @{Name="Local Gateway"; Address=(Get-NetRoute -DestinationPrefix "0.0.0.0/0" | Select -First 1).NextHop},
+                @{Name="Local Gateway"; Address=$gateway},
                 @{Name="Google DNS"; Address="8.8.8.8"},
                 @{Name="Cloudflare"; Address="1.1.1.1"},
                 @{Name="AWS"; Address="amazon.com"},
@@ -114,13 +148,18 @@ do {
             foreach ($target in $targets) {
                 if ($target.Address) {
                     Write-Host "Testing $($target.Name)..." -ForegroundColor White
-                    $result = Test-Connection -ComputerName $target.Address -Count 4 | 
-                        Measure-Object -Property ResponseTime -Average -Minimum -Maximum
-                    
-                    Write-Host "  Min: $($result.Minimum)ms" -ForegroundColor Gray
-                    Write-Host "  Max: $($result.Maximum)ms" -ForegroundColor Gray
-                    Write-Host "  Avg: $([math]::Round($result.Average, 2))ms" -ForegroundColor $(if($result.Average -lt 50){'Green'}elseif($result.Average -lt 100){'Yellow'}else{'Red'})
-                    Write-Host ""
+                    try {
+                        $pingResult = Test-Connection -ComputerName $target.Address -Count 4 -ErrorAction Stop
+                        $stats = $pingResult | Measure-Object -Property ResponseTime -Average -Minimum -Maximum
+                        
+                        Write-Host "  Min: $($stats.Minimum)ms" -ForegroundColor Gray
+                        Write-Host "  Max: $($stats.Maximum)ms" -ForegroundColor Gray
+                        Write-Host "  Avg: $([math]::Round($stats.Average, 2))ms" -ForegroundColor $(if($stats.Average -lt 50){'Green'}elseif($stats.Average -lt 100){'Yellow'}else{'Red'})
+                        Write-Host ""
+                    } catch {
+                        Write-Host "  FAILED - Could not reach server" -ForegroundColor Red
+                        Write-Host ""
+                    }
                 }
             }
             Pause
