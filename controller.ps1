@@ -15,7 +15,7 @@ do {
     Write-Host "  [5] Startup Program Manager"
     Write-Host "  [6] Network Diagnostics"
     Write-Host "  [7] DNS Flush & Reset"
-    Write-Host "  [8] Disk Cleanup & Optimization"
+    Write-Host "  [8] Disk Cleanup & Optimisation"
     Write-Host "  [9] System File Checker & DISM"
     Write-Host " [10] Privacy Settings Tweaker"
     Write-Host " [11] Installed Software Auditor"
@@ -106,9 +106,9 @@ do {
             }
         }
         '8' { 
-            Write-Host "Loading Disk Cleanup & Optimization..." -ForegroundColor Yellow
+            Write-Host "Loading Disk Cleanup & Optimisation..." -ForegroundColor Yellow
             try {
-                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/disk-optimize.ps1' -UseBasicParsing -ErrorAction Stop
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/disk-optimise.ps1' -UseBasicParsing -ErrorAction Stop
                 Clear-Host
                 iex $script
             } catch {
