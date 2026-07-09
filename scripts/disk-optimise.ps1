@@ -20,6 +20,7 @@ do {
     Write-Host "  [6] Optimize/Defrag Drives"
     Write-Host "  [7] Analyse Large Files (>100MB)"
     Write-Host "  [8] Clean Prefetch Files"
+    Write-Host ""
     Write-Host "  [B] Back to Main Menu"
     Write-Host ""
     
