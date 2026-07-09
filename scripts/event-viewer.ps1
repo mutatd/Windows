@@ -14,7 +14,8 @@ Write-Host "[6] Service failures" -ForegroundColor Cyan
 Write-Host "[7] Security audit failures" -ForegroundColor Cyan
 Write-Host "[8] Export filtered events to CSV" -ForegroundColor Cyan
 Write-Host "[9] Show event log sizes" -ForegroundColor Cyan
-Write-Host "[Q] Return to main menu" -ForegroundColor Gray
+Write-Host ""
+Write-Host "[B] Return to main menu" -ForegroundColor Gray
 Write-Host ""
 
 $evChoice = Read-Host "Select option"
@@ -238,6 +239,6 @@ switch ($evChoice.ToUpper()) {
         Write-Host "Total events across all logs: $totalEvents" -ForegroundColor Cyan
         Pause
     }
-    'Q' { break }
+    'B' { break }
     default { Write-Host "Invalid option." -ForegroundColor Red; Start-Sleep 1 }
 }
