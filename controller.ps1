@@ -8,17 +8,31 @@ do {
     Write-Host "         Windows Toolkit" -ForegroundColor Yellow
     Write-Host "========================================" -ForegroundColor Cyan
     Write-Host ""
+    Write-Host "  === SYSTEM TOOLS ===" -ForegroundColor DarkYellow
     Write-Host "  [1] System Information Summary"
+    Write-Host "  [9] System File Checker & DISM"
+    Write-Host "  [11] Installed Software Auditor"
+    Write-Host ""
+    Write-Host "  === MAINTENANCE ===" -ForegroundColor DarkYellow
     Write-Host "  [2] Clear Temp Files & Recycle Bin"
     Write-Host "  [3] Delete Old User Profiles"
-    Write-Host "  [4] Windows Update Manager"
-    Write-Host "  [5] Startup Program Manager"
+    Write-Host "  [8] Disk Cleanup & Optimisation"
+    Write-Host ""
+    Write-Host "  === NETWORK ===" -ForegroundColor DarkYellow
     Write-Host "  [6] Network Diagnostics"
     Write-Host "  [7] DNS Flush & Reset"
-    Write-Host "  [8] Disk Cleanup & Optimisation"
-    Write-Host "  [9] System File Checker & DISM"
-    Write-Host " [10] Privacy Settings Tweaker"
-    Write-Host " [11] Installed Software Auditor"
+    Write-Host "  [12] Network Profile & Firewall Manager"
+    Write-Host "  [13] Hosts File Editor"
+    Write-Host ""
+    Write-Host "  === CONFIGURATION ===" -ForegroundColor DarkYellow
+    Write-Host "  [4] Windows Update Manager"
+    Write-Host "  [5] Startup Program Manager"
+    Write-Host "  [10] Privacy Settings Tweaker"
+    Write-Host "  [14] Service Manager"
+    Write-Host "  [15] Power Plan Manager"
+    Write-Host ""
+    Write-Host "  === DIAGNOSTICS ===" -ForegroundColor DarkYellow
+    Write-Host "  [16] Event Log Analyst"
     Write-Host ""
     Write-Host "  [R] Refresh Controller"
     Write-Host "  [Q] Quit"
@@ -142,6 +156,61 @@ do {
             Write-Host "Loading Installed Software Auditor..." -ForegroundColor Yellow
             try {
                 $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/software-audit.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
+        }
+        '12' { 
+            Write-Host "Loading Network Profile & Firewall Manager..." -ForegroundColor Yellow
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/network-firewall.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
+        }
+        '13' { 
+            Write-Host "Loading Hosts File Editor..." -ForegroundColor Yellow
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/hosts-editor.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
+        }
+        '14' { 
+            Write-Host "Loading Service Manager..." -ForegroundColor Yellow
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/service-manager.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
+        }
+        '15' { 
+            Write-Host "Loading Power Plan Manager..." -ForegroundColor Yellow
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/power-plan.ps1' -UseBasicParsing -ErrorAction Stop
+                Clear-Host
+                iex $script
+            } catch {
+                Write-Host "ERROR: Could not load script - $_" -ForegroundColor Red
+                Pause
+            }
+        }
+        '16' { 
+            Write-Host "Loading Event Log Analyst..." -ForegroundColor Yellow
+            try {
+                $script = irm 'https://raw.githubusercontent.com/mutatd/Windows/refs/heads/main/scripts/event-viewer.ps1' -UseBasicParsing -ErrorAction Stop
                 Clear-Host
                 iex $script
             } catch {
