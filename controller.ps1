@@ -35,6 +35,7 @@ do {
     Write-Host "  === DIAGNOSTICS ===" -ForegroundColor DarkYellow
     Write-Host "  [17] Event Log Analyst"
     Write-Host ""
+    Write-Host "  === OPTIONS ===" -ForegroundColor DarkYellow
     Write-Host "  [R] Refresh Controller"
     Write-Host "  [Q] Quit"
     Write-Host ""
